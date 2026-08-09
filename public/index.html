@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de partidos</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <span class="topbar-mark">&#9917;</span>
+  <h1>Registro de partidos</h1>
+</header>
+
+<main>
+  <section class="card" id="section-leaderboard">
+    <h2>Tabla general</h2>
+    <div class="board-wrap">
+      <table class="board" id="leaderboard-table">
+        <thead>
+          <tr><th>Jugador</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>Goles</th><th>Pts</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="empty-msg" id="leaderboard-empty" hidden>Todavia no hay partidos jugados.</p>
+    </div>
+  </section>
+
+  <section class="card" id="section-players">
+    <h2>Jugadores</h2>
+    <form id="player-form" class="row-form">
+      <input type="text" id="player-name" placeholder="Nombre del jugador" required>
+      <button type="submit">Agregar</button>
+    </form>
+    <ul class="chip-list" id="player-list"></ul>
+  </section>
+
+  <section class="card" id="section-new-match">
+    <h2>Nuevo partido</h2>
+    <form id="match-form" class="match-form">
+      <label>Fecha
+        <input type="date" id="match-date" required>
+      </label>
+      <label>Jugadores por lado
+        <input type="number" id="team-size" min="1" max="11" value="2" required>
+      </label>
+      <div class="sides">
+        <div class="side">
+          <span class="side-label side-a">Lado A</span>
+          <div id="side-a-selects" class="side-selects"></div>
+        </div>
+        <span class="vs">vs</span>
+        <div class="side">
+          <span class="side-label side-b">Lado B</span>
+          <div id="side-b-selects" class="side-selects"></div>
+        </div>
+      </div>
+      <button type="submit">Crear partido</button>
+    </form>
+  </section>
+
+  <section class="card" id="section-matches">
+    <h2>Partidos</h2>
+    <div id="match-list" class="match-list"></div>
+    <p class="empty-msg" id="matches-empty" hidden>Todavia no has creado partidos.</p>
+  </section>
+
+  <section class="card" id="section-partners">
+    <h2>Compañeros de equipo</h2>
+    <label class="row-form">
+      Ver a quien le va mejor jugando con
+      <select id="partner-player"></select>
+    </label>
+    <ul class="chip-list" id="partner-list"></ul>
+    <p class="empty-msg" id="partners-empty" hidden>Este jugador todavia no tiene partidos jugados.</p>
+  </section>
+</main>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
