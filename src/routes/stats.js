@@ -3,7 +3,7 @@ import { pool } from "../db.js";
 
 const router = Router();
 
-// Tabla general: victorias, derrotas, partidos jugados y goles por jugador
+// Tabla general: victorias, derrotas, partidos jugados, goles y rendimiento goleador
 router.get("/leaderboard", async (req, res) => {
   const { rows } = await pool.query(
     `SELECT
@@ -13,7 +13,9 @@ router.get("/leaderboard", async (req, res) => {
        COUNT(*) FILTER (WHERE m.winner_side = 'draw') AS draws,
        COUNT(*) FILTER (WHERE m.winner_side IS NOT NULL AND m.winner_side != 'draw' AND mp.side != m.winner_side) AS losses,
        COALESCE(SUM(mp.goals), 0) AS goals,
-       COUNT(*) FILTER (WHERE mp.side = m.winner_side) AS points
+       COUNT(*) FILTER (WHERE mp.side = m.winner_side) AS points,
+       ROUND(COALESCE(SUM(mp.goals), 0)::numeric / NULLIF(COUNT(*), 0), 2) AS goals_per_match,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE mp.goals > 0) / NULLIF(COUNT(*), 0), 1) AS scoring_rate
      FROM match_players mp
      JOIN matches m ON m.id = mp.match_id
      JOIN players p ON p.id = mp.player_id

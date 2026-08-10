@@ -141,6 +141,19 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 .btn-outline:hover { background: var(--pitch); color: white; }
 .status-pending { color: var(--gold); font-weight: 600; font-size: 12px; }
 
+.match-row-wrap { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.match-row-wrap .match-row { border: none; border-radius: 0; }
+.goals-panel {
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.goal-input { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; }
+.goal-input input { width: 70px; padding: 6px 8px; }
+
 .toast {
   position: fixed;
   bottom: 20px;

@@ -74,6 +74,8 @@ async function loadLeaderboard() {
         <td>${r.draws}</td>
         <td>${r.losses}</td>
         <td>${r.goals}</td>
+        <td>${r.goals_per_match ?? "0"}</td>
+        <td>${r.scoring_rate ?? "0"}%</td>
         <td>${r.points}</td>
       </tr>`
     )
@@ -105,15 +107,55 @@ async function loadMatches() {
                <button class="btn-outline" onclick="setWinner(${m.id}, 'draw')">Empate</button>
              </div>`
           : "";
-      return `<div class="match-row">
-        <div>
-          <div class="match-teams">${names(m.side_a)} ${winLabel("A")} vs ${names(m.side_b)} ${winLabel("B")}</div>
-          <div class="match-date">${m.match_date.slice(0, 10)} · ${status}</div>
+      const goalsRow = (p) =>
+        `<div class="goal-input">
+           <span>${p.name}</span>
+           <input type="number" min="0" value="${p.goals || 0}" data-player-id="${p.player_id}">
+         </div>`;
+      const goalsForm = `<div class="goals-panel" id="goals-panel-${m.id}" hidden>
+        ${[...m.side_a, ...m.side_b].map(goalsRow).join("")}
+        <button class="btn-outline" onclick="saveGoals(${m.id})">Guardar goles</button>
+      </div>`;
+      return `<div class="match-row-wrap">
+        <div class="match-row">
+          <div>
+            <div class="match-teams">${names(m.side_a)} ${winLabel("A")} vs ${names(m.side_b)} ${winLabel("B")}</div>
+            <div class="match-date">${m.match_date.slice(0, 10)} · ${status}</div>
+          </div>
+          <div class="match-actions">
+            ${actions}
+            <button class="btn-outline" onclick="toggleGoals(${m.id})">Goles</button>
+          </div>
         </div>
-        ${actions}
+        ${goalsForm}
       </div>`;
     })
     .join("");
+}
+
+function toggleGoals(matchId) {
+  const panel = document.getElementById(`goals-panel-${matchId}`);
+  panel.hidden = !panel.hidden;
+}
+
+async function saveGoals(matchId) {
+  const panel = document.getElementById(`goals-panel-${matchId}`);
+  const inputs = Array.from(panel.querySelectorAll("input[data-player-id]"));
+  try {
+    for (const input of inputs) {
+      await api(`/matches/${matchId}/goals`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          player_id: Number(input.dataset.playerId),
+          goals: Number(input.value) || 0,
+        }),
+      });
+    }
+    showToast("Goles guardados");
+    await Promise.all([loadMatches(), loadLeaderboard()]);
+  } catch (err) {
+    showToast(err.message, true);
+  }
 }
 
 async function setWinner(matchId, side) {
